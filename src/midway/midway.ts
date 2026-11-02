@@ -1,3 +1,4 @@
+import { lightningFlash } from './lightning';
 import { palette } from './palette';
 import {
   archBounds,
@@ -269,6 +270,14 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
     sky.addColorStop(1, palette.sky);
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, canvas.clientWidth, Math.max(0, horizon + 2));
+    // Lightning washes over the sky now and then, but never with reduced motion.
+    const flash = calm ? 0 : lightningFlash(t);
+    if (flash > 0) {
+      ctx.globalAlpha = flash * 0.7;
+      ctx.fillStyle = palette.lightning;
+      ctx.fillRect(0, 0, canvas.clientWidth, Math.max(0, horizon + 2));
+      ctx.globalAlpha = 1;
+    }
 
     ctx.setTransform(dpr * zoom, 0, 0, dpr * zoom, 0, 0);
     const span = view.w + 200;
